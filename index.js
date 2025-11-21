@@ -7,11 +7,13 @@ const { removeBackground } = require("@imgly/background-removal-node");
 
 const app = express();
 app.use(cors());
+const PORT = process.env.PORT || 5000; // use Render assigned port
 
 // Multer storage setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "uploads/"),
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname)),
+  filename: (req, file, cb) =>
+    cb(null, Date.now() + path.extname(file.originalname)),
 });
 
 const upload = multer({ storage });
@@ -49,9 +51,8 @@ app.post("/remove-bg", upload.single("image"), async (req, res) => {
       success: true,
       message: "Background removed successfully!",
       base64: `data:image/png;base64,${resultBase64}`,
-      outputPath: outputImagePath
+      outputPath: outputImagePath,
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -62,6 +63,7 @@ app.post("/remove-bg", upload.single("image"), async (req, res) => {
 });
 
 // Start Server
-app.listen(5000, () => {
-  console.log("Server running on http://localhost:5000");
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
